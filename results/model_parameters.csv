@@ -1,0 +1,2 @@
+trend_slope_per_month,trend_intercept,best_harmonic_period_months,best_harmonic_period_years,simple_seasonal_smoothing_level,simple_seasonal_smoothing_seasonal,sarima_seasonal_ma_L12,arima_constant,arima_ar_L1,arima_ar_L2,arima_ma_L1,arima_ma_L2
+-0.018589451637365653,49.92013021702838,100.0,8.333333333333334,1.4901161193847656e-08,0.0,-0.9248989267943091,44.364970367035696,1.366298746279311,-0.6498864605162836,-0.9376615980802129,0.11326689326899225
