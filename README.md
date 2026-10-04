@@ -1,76 +1,126 @@
 # Rainfall Time Series Analysis
 
-Python reconstruction of an academic time-series project on rainfall patterns in India.
+A reproducible Python reconstruction of an academic time-series project on rainfall patterns in India.
 
-## Original project scope
+## Project scope
 
-The report compares two regions:
+The original academic report compares:
 
-- Delhi, Haryana & Chandigarh
-- Assam & Meghalaya
+- **Delhi, Haryana & Chandigarh**
+- **Assam & Meghalaya**
 
-The original aim was to isolate trend, seasonal, cyclic and random components and then use Box-Jenkins/model comparison methods to forecast rainfall through 2025.
+The project studies the four classical components of a time series — **trend, seasonal, cyclic, and random** — and then compares forecasting models to project rainfall patterns through 2025.
 
-## What is reproducible from the files currently supplied
+> The original report contains both regional analyses. The raw monthly dataset currently available in this repository is only for **Delhi, Haryana & Chandigarh**, so the Python reconstruction is limited to that region rather than inventing the missing Assam-Meghalaya data.
 
-The uploaded CSV contains **600 monthly observations from January 1966 to December 2015 for Delhi, Haryana & Chandigarh**. The Python code in this repository reconstructs this region from the raw monthly observations only; it does not use the spreadsheet's precomputed formula columns.
+## Dataset
 
-The Assam-Meghalaya raw monthly dataset was not included with the uploaded files, so its full Python reconstruction is intentionally not claimed.
+The supplied raw file contains **600 monthly observations from January 1966 to December 2015**.
 
-## Python analysis
+- Raw data: [data/raw/delhi_haryana_chandigarh_source.csv](data/raw/delhi_haryana_chandigarh_source.csv)
+- Original academic report: [report/original_academic_report.pdf](report/original_academic_report.pdf)
 
-`src/rainfall_time_series_analysis.py` performs:
+One rainfall cell, **November 1970**, is blank in the supplied CSV. The Python reconstruction treats it as `0.0`, which reproduces the annual average reported in the original academic work.
+
+## Python implementation
+
+The complete analysis is in:
+
+[src/rainfall_time_series_analysis.py](src/rainfall_time_series_analysis.py)
+
+It performs:
 
 1. Data cleaning and monthly-date parsing
-2. Time plot and annual-average linear trend
-3. Multiplicative decomposition
-4. Seasonal indices and deseasonalization
-5. Harmonic analysis using 20 trial periods
-6. Cyclic and random component estimation
-7. Variate-difference calculations
-8. Augmented Dickey-Fuller test
-9. ACF/PACF diagnostics
-10. Model comparison:
+2. Monthly time-series visualization
+3. Annual-average linear trend estimation
+4. Multiplicative decomposition
+5. Seasonal-index estimation and deseasonalization
+6. Harmonic analysis using 20 trial periods
+7. Cyclic and random component estimation
+8. Variate-difference calculations
+9. Augmented Dickey-Fuller stationarity test
+10. ACF/PACF diagnostics
+11. Model comparison:
    - Simple Seasonal exponential smoothing
    - SARIMA(0,0,0)(0,1,1)[12]
    - ARIMA(2,0,2)
-11. Forecast for 2016-2025
+12. Forecasting from 2016 through 2025
 
-## Important reproduction checks
+## Time-series pattern
 
-The code reproduces several key results from the original report very closely:
+![Monthly rainfall time plot](figures/01_monthly_time_plot.png)
 
-- Maximum recorded rainfall: **405.3**
-- ADF statistic with lag 8 and trend: approximately **-17.806**
-- Dominant long cyclic trial period: approximately **100 months (8.33 years)**
-- Simple Seasonal model is the best of the three compared models for Delhi/Haryana/Chandigarh
-- The seasonal component is dominant, with the largest seasonal indices in **July-August**
+The monthly series shows strong recurring monsoon-season peaks.
 
-One rainfall cell (November 1970) is blank in the supplied CSV. It is treated as `0.0` because doing so reproduces the report's 1970 annual average of **44.85**.
+## Seasonal component
+
+![Seasonal indices](figures/03_seasonal_indices.png)
+
+The seasonal component is dominant, with the highest indices in **July and August**, consistent with the original project's conclusion that rainfall in this region is concentrated in a few monsoon months.
+
+## Stationarity check
+
+Using an Augmented Dickey-Fuller test with lag 8 and a trend term:
+
+- ADF statistic: approximately **-17.806**
+- Conclusion: the series is stationary at the 5% significance level
+
+This closely reproduces the stationarity result reported in the academic report.
 
 ## Model comparison
 
 | Model | R² | RMSE | MAE |
 |---|---:|---:|---:|
-| Simple Seasonal | 0.658 | 38.166 | 22.816 |
+| **Simple Seasonal** | **0.658** | **38.166** | **22.816** |
 | SARIMA(0,0,0)(0,1,1)[12] | 0.616 | 40.084 | 24.086 |
 | ARIMA(2,0,2) | 0.330 | 53.398 | 36.851 |
 
-The **Simple Seasonal** model performs best among these three models for the supplied Delhi/Haryana/Chandigarh series.
+Among these three models, the **Simple Seasonal model** gives the lowest RMSE and MAE, matching the original report's selection for Delhi/Haryana/Chandigarh.
 
-## Run
+## Forecast: 2016-2025
+
+![Forecast 2016-2025](figures/09_forecast_2016_2025.png)
+
+The forecast retains the strong yearly seasonal pattern present in the historical series.
+
+## Other reproducibility checks
+
+The Python reconstruction also reproduces or closely matches several values from the original project:
+
+- Maximum recorded rainfall: **405.3**
+- Strongest harmonic trial period: approximately **100 months (8.33 years)**
+- Dominant seasonal peaks: **July-August**
+- Simple Seasonal model selected as the best of the three compared models
+
+Machine-readable outputs are available in the [results](results/) folder.
+
+## Run locally
 
 ```bash
 pip install -r requirements.txt
 python src/rainfall_time_series_analysis.py
 ```
 
-Generated outputs are saved under `data/processed/`, `results/`, and `figures/`.
+The script generates processed datasets, statistical results, and plots automatically.
 
-## Original report
+## Repository structure
 
-The original academic report is preserved in:
+```text
+rainfall-time-series-analysis/
+├── README.md
+├── src/
+│   └── rainfall_time_series_analysis.py
+├── data/
+│   └── raw/
+│       └── delhi_haryana_chandigarh_source.csv
+├── results/
+├── figures/
+├── report/
+│   └── original_academic_report.pdf
+├── requirements.txt
+└── .gitignore
+```
 
-`report/original_academic_report.pdf`
+## Tools
 
-The report also contains the Assam-Meghalaya analysis; that part is kept as the original academic work because its raw monthly data are not currently available for independent Python reproduction.
+Python · Pandas · NumPy · Matplotlib · SciPy · Statsmodels · Scikit-learn · Time Series Analysis · ADF · ACF/PACF · ARIMA · SARIMA · Exponential Smoothing
